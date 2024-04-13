@@ -35,7 +35,9 @@ def query_assistant(input_list):
         model="gpt-4-turbo-preview",
         messages=[
             {"role": "system", "content": "You are an assistant in a doctors office. There is a conversation between a doctor and a\
-             client you are listening to. If there is a point where you think you should add information or answer a question, respond. Otherwise respond \
+             client you are listening to. If there is a point where you think you should add information or answer a question, respond. Also add information\
+             if you think there is miss-information or miss-guidance in the conversation. Also, if the doctor is giving correct or helpful\
+             information and the client is skeptical, you can chime in to add your perspective. Otherwise respond \
              with \"NO RESPONSE\"."}
         ] + user_map
     )
@@ -100,7 +102,7 @@ def record_audio(duration, output_file):
 
 def main():
 
-    record_audio(5, "audio.wav")
+    record_audio(15, "audio.wav")
 
     transcript = capture_speech_to_text(client)
 
