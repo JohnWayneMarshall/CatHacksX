@@ -103,7 +103,7 @@ def record_audio(duration, output_file):
 
 def main():
 
-    record_audio(15, "audio.wav")
+    record_audio(20, "audio.wav")
 
     transcript = capture_speech_to_text(client)
 
