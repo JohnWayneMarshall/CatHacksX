@@ -1,6 +1,9 @@
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
+import pyaudio
+import wave
+import playsound
 
 load_dotenv()
 
@@ -37,25 +40,77 @@ def query_assistant(input_list):
         ] + user_map
     )
     if completion.choices[0].message.content!="NO RESPONSE":
-        print(completion.choices[0].message.content)
+        get_tts(completion.choices[0].message.content)
+
+def get_tts(text_to_speak):
+
+    response = client.audio.speech.create(
+        model="tts-1",
+        voice="onyx",
+        input=text_to_speak
+    )
+
+    audio_data = response.content
+
+    with open("audio.mp3","wb") as f:
+        f.write(audio_data)
+
+    playsound.playsound('audio.mp3', True)
+
+def capture_speech_to_text(client):
+    audio_file= open("audio.wav", "rb")
+    transcription = client.audio.transcriptions.create(
+        model="whisper-1", 
+        file=audio_file
+    )
+    return transcription
+
+def record_audio(duration, output_file):
+    chunk = 1024
+    format = pyaudio.paInt16
+    channels = 1
+    rate = 44100
+
+    audio = pyaudio.PyAudio()
+
+    stream = audio.open(format=format, channels=channels,
+                        rate=rate, input=True,
+                        frames_per_buffer=chunk)
+
+    print("Recording...")
+
+    frames = []
+
+    for i in range(0, int(rate / chunk * duration)):
+        data = stream.read(chunk)
+        frames.append(data)
+
+    print("Finished recording.")
+
+    stream.stop_stream()
+    stream.close()
+    audio.terminate()
+
+    wf = wave.open(output_file, 'wb')
+    wf.setnchannels(channels)
+    wf.setsampwidth(audio.get_sample_size(format))
+    wf.setframerate(rate)
+    wf.writeframes(b''.join(frames))
+    wf.close()
 
 def main():
-    # take in user file
 
-    # speech to text
+    record_audio(5, "audio.wav")
 
-    # get_conversation_list
+    transcript = capture_speech_to_text(client)
 
-    # query_assistant
+    if not (transcript.text and transcript.text.strip()):
+        return
 
-    # text to speech
+    conversation = transcript.text
 
-    conversation = "How was your day? It was good."
-    input_list = get_conversation_list(conversation)
-    print(input_list)
-    query_assistant(input_list)
+    print(conversation)
 
-    conversation = "Where is my uvula located? I don't know."
     input_list = get_conversation_list(conversation)
     print(input_list)
     query_assistant(input_list)
