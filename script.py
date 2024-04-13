@@ -36,15 +36,28 @@ def query_assistant(input_list):
              with \"NO RESPONSE\"."}
         ] + user_map
     )
-    print(completion.choices[0].message.content)
+    if completion.choices[0].message.content!="NO RESPONSE":
+        print(completion.choices[0].message.content)
 
+def main():
+    # take in user file
 
-conversation = "How was your day? It was good."
-input_list = get_conversation_list(conversation)
-print(input_list)
-query_assistant(input_list)
+    # speech to text
 
-conversation = "Where is my uvula located? I don't know."
-input_list = get_conversation_list(conversation)
-print(input_list)
-query_assistant(input_list)
+    # get_conversation_list
+
+    # query_assistant
+
+    # text to speech
+
+    conversation = "How was your day? It was good."
+    input_list = get_conversation_list(conversation)
+    print(input_list)
+    query_assistant(input_list)
+
+    conversation = "Where is my uvula located? I don't know."
+    input_list = get_conversation_list(conversation)
+    print(input_list)
+    query_assistant(input_list)
+
+main()
